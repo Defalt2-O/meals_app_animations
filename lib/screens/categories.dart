@@ -33,7 +33,7 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     _animationController = AnimationController(
       vsync:
           this, //vsync controls the number of frames per second that an animation runs at. Setting it to this refers to this entire code
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 900),
       lowerBound: 0, //This is used as a reference in the builder argument.
       upperBound: 1,
     );
@@ -87,14 +87,47 @@ class _CategoriesScreenState extends State<CategoriesScreen>
             )
         ],
       ),
-      builder: (context, child) => Padding(
-        //builder's child argument is the content that will be excluded from the animation.
+      builder: (context, child) => SlideTransition(
+        position: Tween(
+          //Tween decides 'between' which two offsets you want to animate
+          begin: const Offset(
+              0.0, 0.5), //The position you wanna start the animation from
+          end: const Offset(
+              0.0, 0.0), //The position you wanna end the animation at
+        ).animate(
+          CurvedAnimation(
+              parent: _animationController,
+              curve: Curves
+                  .decelerate), //Animation used is _animationController, with a decelerate style.
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+
+/*
+Padding(
+        .//builder's child argument is the content that will be animated, without changing its layout. Its included in the animation,
+        .//but it isnt animated.
         padding: EdgeInsets.only(
           top: 500 - _animationController.value * 500,
         ),
         child:
             child, //The Padding is animated, but the child it contains is the child passed to builder i.r. GridView
       ),
-    );
-  }
-}
+*/
+
+/* SlideTransition(
+        position: _animationController.drive( //drive converts the lower and upper bound values to values that can be used by offfsets.
+          Tween(
+            begin: const Offset(
+                0.0, 0.5), //The position you wanna start the animation from
+            end: const Offset(
+                0.0, 0.0), //The position you wanna end the animation at
+          ),
+        ),
+        child: child,
+      ),
+ */
