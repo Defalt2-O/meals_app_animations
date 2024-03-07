@@ -33,10 +33,12 @@ class _CategoriesScreenState extends State<CategoriesScreen>
     _animationController = AnimationController(
       vsync:
           this, //vsync controls the number of frames per second that an animation runs at. Setting it to this refers to this entire code
-      duration: const Duration(milliseconds: 300),
-      lowerBound: 0,
+      duration: const Duration(milliseconds: 500),
+      lowerBound: 0, //This is used as a reference in the builder argument.
       upperBound: 1,
     );
+
+    _animationController.forward(); //This is used to start the animation.
   }
 
   @override
@@ -62,24 +64,37 @@ class _CategoriesScreenState extends State<CategoriesScreen>
 
   @override
   Widget build(BuildContext context) {
-    return GridView(
-      padding: const EdgeInsets.all(24),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3 / 2,
-        crossAxisSpacing: 20,
-        mainAxisSpacing: 20,
+    return AnimatedBuilder(
+      animation:
+          _animationController, //animation properties that we want to animate with are used here
+      child: GridView(
+        //child argument of Animated Builder are those widgets that aren't supposed to be animated.
+        padding: const EdgeInsets.all(24),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3 / 2,
+          crossAxisSpacing: 20,
+          mainAxisSpacing: 20,
+        ),
+        children: [
+          // availableCategories.map((category) => CategoryGridItem(category: category)).toList()
+          for (final category in availableCategories)
+            CategoryGridItem(
+              category: category,
+              onSelectCategory: () {
+                _selectCategory(context, category);
+              },
+            )
+        ],
       ),
-      children: [
-        // availableCategories.map((category) => CategoryGridItem(category: category)).toList()
-        for (final category in availableCategories)
-          CategoryGridItem(
-            category: category,
-            onSelectCategory: () {
-              _selectCategory(context, category);
-            },
-          )
-      ],
+      builder: (context, child) => Padding(
+        //builder's child argument is the content that will be excluded from the animation.
+        padding: EdgeInsets.only(
+          top: 500 - _animationController.value * 500,
+        ),
+        child:
+            child, //The Padding is animated, but the child it contains is the child passed to builder i.r. GridView
+      ),
     );
   }
 }
