@@ -6,7 +6,7 @@ import 'package:meals/widgets/category_grid_item.dart';
 import 'package:meals/screens/meals.dart';
 import 'package:meals/models/category.dart';
 
-class CategoriesScreen extends StatelessWidget {
+class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({
     super.key,
     required this.availableMeals,
@@ -14,8 +14,39 @@ class CategoriesScreen extends StatelessWidget {
 
   final List<Meal> availableMeals;
 
+  @override
+  State<CategoriesScreen> createState() => _CategoriesScreenState();
+}
+
+class _CategoriesScreenState extends State<CategoriesScreen>
+    with SingleTickerProviderStateMixin {
+  //with keyword is used to add functionality from another class into our own class
+  //It merges a class into our behind the scenes
+
+  late AnimationController
+      _animationController; //late tells FLutter that this value won't be initialized right away, but
+  //when it is used in the program, it will definitely have some value.
+  //Animation Controllers cannot be initialized at the time of declaration, therefore we use
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync:
+          this, //vsync controls the number of frames per second that an animation runs at. Setting it to this refers to this entire code
+      duration: const Duration(milliseconds: 300),
+      lowerBound: 0,
+      upperBound: 1,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   void _selectCategory(BuildContext context, Category category) {
-    final filteredMeals = availableMeals
+    final filteredMeals = widget.availableMeals
         .where((meal) => meal.categories.contains(category.id))
         .toList();
 
