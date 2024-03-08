@@ -33,7 +33,29 @@ class MealDetailsScreen extends ConsumerWidget {
                 ),
               );
             },
-            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
+            icon: AnimatedSwitcher(
+              //Animated switcher switches between two widgets to animate.
+              duration: const Duration(
+                milliseconds: 800,
+              ),
+              transitionBuilder: (child, animation) {
+                //takes a child to animate, and accepts (from flutter) default animation settings
+                //this is why Animated Switcher is an implicit animation
+                return RotationTransition(
+                  // turns: animation,
+                  turns: Tween<double>(
+                    begin: 0.5,
+                    end: 1,
+                  ).animate(animation),
+                  child: child,
+                );
+              },
+              child: Icon(
+                isFavorite ? Icons.star : Icons.star_border,
+                key: ValueKey(
+                    isFavorite), //keys are used to differentiate between widgets of the same type, but that have different data in them
+              ),
+            ),
           )
         ]),
         body: SingleChildScrollView(
@@ -89,3 +111,15 @@ class MealDetailsScreen extends ConsumerWidget {
         ));
   }
 }
+
+/* return AnimatedCrossFade(
+                  firstChild: const Icon(Icons.star_border),
+                  secondChild: const Icon(Icons.star),
+                  crossFadeState: isFavorite
+                      /? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  duration: const Duration(milliseconds: 900),
+                  firstCurve: Curves.decelerate,
+                  secondCurve: Curves.decelerate,
+                );
+*/
